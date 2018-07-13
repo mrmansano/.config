@@ -83,10 +83,16 @@ call plug#begin('~/.vim/plugged')
 	Plug 'hesselbom/vim-hsftp'
 	" {{
 		" autocmd BufWritePost *.{cpp,h,x,prj} :Hupload
-		command W :w|Hupload
+		command! W :w|Hupload
 	" }}
 	Plug 'eshion/vim-sync'
-	" Plug 'vim-syntastic/syntastic'
+	Plug 'vim-syntastic/syntastic'
+	"{{
+		let g:syntastic_always_populate_loc_list = 1
+		let g:syntastic_auto_loc_list = 1
+		let g:syntastic_check_on_open = 1
+		let g:syntastic_check_on_wq = 0
+	"}}
 	Plug 'itchyny/lightline.vim'
 	" {{
 		let g:lightline = {
@@ -95,6 +101,39 @@ call plug#begin('~/.vim/plugged')
 	" }}
 	Plug 'skywind3000/asyncrun.vim'
 	Plug 'rhysd/vim-clang-format'
+	"{{
+		let g:clang_format#style_options = {
+			\ "AlignAfterOpenBracket": "Align",
+			\ "AlignEscapedNewlines": "true",
+			\ "AlignOperands": "true",
+			\ "AlignTrailingComments": "true",
+			\ "BinPackArguments": "true",
+			\ "BinPackParameters": "true",
+			\ "BraceWrapping": {
+			\ 	"AfterClass": "false",
+			\ 	"AfterControlStatement": "true",
+			\ 	"AfterEnum": "true",
+			\ 	"AfterFunction": "true",
+			\ 	"AfterNamespace": "true",
+			\ 	"AfterStruct": "true",
+			\ 	"AfterUnion": "true",
+			\ 	"AfterExternBlock": "true",
+			\ 	"BeforeCatch": "true",
+			\ 	"BeforeElse": "true",
+			\ 	"SplitEmptyFunction": "true",
+			\ 	"SplitEmptyNamespace": "true"
+			\ },
+			\ "BreakBeforeBraces": "Custom",
+			\ "Cpp11BracedListStyle": "true",
+			\ "Standard": "C++11",
+			\ "IncludeBlocks": "Regroup",
+			\ "IndentWidth": 8,
+			\ "NamespaceIndentation": "All",
+			\ "PointerAlignment": "Left",
+			\ "TabWidth": 8,
+			\ "UseTab": "Always"
+			\}
+	"}}
 	Plug 'Valloric/YouCompleteMe'
 	" {{
 		let g:ycm_server_python_interpreter = '/usr/bin/python'
@@ -102,25 +141,34 @@ call plug#begin('~/.vim/plugged')
 		let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 		let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
 		let g:ycm_min_num_of_chars_for_completion = 3
-		let g:ycm_autoclose_preview_window_after_completion = 1
 		let g:ycm_autoclose_preview_window_after_insertion = 1
-			" }}
-	Plug 'tenfyzhong/CompleteParameter.vim'
-	" {{
-		inoremap <silent><expr> ( complete_parameter#pre_complete("()")
-		smap <c-j> <Plug>(complete_parameter#goto_next_parameter)
-		imap <c-j> <Plug>(complete_parameter#goto_next_parameter)
-		smap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
-		imap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+		"will put icons in Vim's gutter on lines that have a diagnostic set.
+		"Turning this off will also turn off the YcmErrorLine and YcmWarningLine
+		"highlighting
+		let g:ycm_enable_diagnostic_signs = 1
+		let g:ycm_enable_diagnostic_highlighting = 1
+		let g:ycm_always_populate_location_list = 1 "default 0
+		let g:ycm_open_loclist_on_ycm_diags = 1 "default 1
+
+		" Python related variables
+		let g:ycm_python_binary_path = 'python3'
+	" }}
+	" Plug 'tenfyzhong/CompleteParameter.vim'
+	" " {{
+	" 	inoremap <silent><expr> ( complete_parameter#pre_complete("()")
+	" 	smap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+	" 	imap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+	" 	smap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+	" 	imap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
 	" }}
 	Plug 'SirVer/ultisnips'
 	" {{
 		" If you want :UltiSnipsEdit to split your window.
 		let g:UltiSnipsEditSplit="vertical"
 		" better key bindings for UltiSnipsExpandTrigger
-		let g:UltiSnipsExpandTrigger = "<tab>"
-		let g:UltiSnipsJumpForwardTrigger = "<tab>"
-		let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+		let g:UltiSnipsExpandTrigger = "<C-k>"
+		let g:UltiSnipsJumpForwardTrigger = "<C-k>"
+		let g:UltiSnipsJumpBackwardTrigger = "<C-l>"
 	" }}
 	Plug 'honza/vim-snippets'
 	Plug 'ervandew/supertab'
@@ -134,8 +182,16 @@ call plug#begin('~/.vim/plugged')
 		let g:nord_comment_brightness = 12
 	" }}
 	Plug 'xuqix/h2cppx'
+	" {{
+		command! F2cppx :call H2cppx(0)
+		command! L2cppx :call H2cppxLine(0)
+	" }}
 	Plug 'tyru/open-browser.vim'
 	Plug 'tell-k/vim-autopep8'
+	" {{
+		let g:autopep8_disable_show_diff=1
+		let g:autopep8_on_save = 1
+	" }}
 	Plug 'Chiel92/vim-autoformat'
 	" {{
 		noremap <F3> :Autoformat<CR>
@@ -146,6 +202,23 @@ call plug#begin('~/.vim/plugged')
 	Plug 'tpope/vim-fugitive'
 	Plug 'chrisbra/csv.vim'
 	Plug 'vim-scripts/DoxygenToolkit.vim'
+	" Plug 'tibabit/vim-templates'
+	" " {{
+	" 	let g:tmpl_search_paths = ['~/Commvault/Templates']
+	" 	let g:tmpl_author_name = 'Marcelo Mansano (mmansano)'
+	" 	let g:tmp_author_email = 'mmansano@commvault.com'
+	" " }}
+	Plug 'aperezdc/vim-template'
+	" {{
+		let g:username = 'Marcelo Mansano (mmansano)'
+		let g:email = 'mmansano@commvault.com'
+	" }}
+	Plug 'majutsushi/tagbar'
+	"{{
+		nnoremap <silent> <leader>t :TagbarToggle<CR>
+	"}}
+	Plug 'dkprice/vim-easygrep'
+	Plug 'heavenshell/vim-pydocstring'
 call plug#end()
 
 "Credit joshdick
@@ -178,3 +251,9 @@ if has("gui_vimr")
 else
 	hi Normal guibg=NONE ctermbg=NONE
 endif
+
+set backupdir=~/.config/nvim/backup
+set undodir=~/.config/nvim/undo
+set undofile
+
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
