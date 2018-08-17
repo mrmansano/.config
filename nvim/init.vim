@@ -5,7 +5,11 @@ call plug#begin('~/.vim/plugged')
 		set mouse=a
 		set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 		set list
-		set clipboard=unnamed
+		set hidden
+        if exists("g:gui_oni")
+            set nocompatible
+            filetype off
+        endif
 	" }}
 	Plug 'junegunn/vim-easy-align'
 	Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -86,18 +90,44 @@ call plug#begin('~/.vim/plugged')
 		command! W :w|Hupload
 	" }}
 	Plug 'eshion/vim-sync'
-	Plug 'vim-syntastic/syntastic'
+	" Plug 'w0rp/ale'
 	"{{
-		let g:syntastic_always_populate_loc_list = 1
-		let g:syntastic_auto_loc_list = 1
-		let g:syntastic_check_on_open = 1
-		let g:syntastic_check_on_wq = 0
+		" let g:ale_sign_error = "❌"
+		" let g:ale_sign_warning = "⚠️"
+		" let g:ale_linters = { 'cpp': ['clangcheck'], 'python': ['flake8'] }
+	"}}
+	" Plug 'vim-syntastic/syntastic'
+	"{{
+		" let g:syntastic_always_populate_loc_list = 1
+		" let g:syntastic_auto_loc_list = 0
+		" let g:syntastic_check_on_open = 1
+		" let g:syntastic_check_on_wq = 1
+		" let g:syntastic_error_symbol = "❌"
+		" let g:syntastic_warning_symbol = "⚠️"
+		" highlight link SyntasticErrorSign SignColumn
+		" highlight link SyntasticWarningSign SignColumn
+		" highlight link SyntasticStyleErrorSign SignColumn
+		" highlight link SyntasticStyleWarningSign SignColumn
 	"}}
 	Plug 'itchyny/lightline.vim'
 	" {{
 		let g:lightline = {
 			\ 'colorscheme': 'nord',
-			\}
+			\ 'component_function': {
+			\	'filetype': 'MyFiletype',
+			\	'fileformat': 'MyFileformat',
+			\	'readonly': 'LightlineReadonly'
+			\ }
+		\}
+		function! MyFiletype()
+			return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+		endfunction
+		function! MyFileformat()
+			return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+		endfunction
+		function! LightlineReadonly()
+			return &readonly ? '' : ''
+		endfunction
 	" }}
 	Plug 'skywind3000/asyncrun.vim'
 	Plug 'rhysd/vim-clang-format'
@@ -136,7 +166,7 @@ call plug#begin('~/.vim/plugged')
 	"}}
 	Plug 'Valloric/YouCompleteMe'
 	" {{
-		let g:ycm_server_python_interpreter = '/usr/bin/python'
+		let g:ycm_server_python_interpreter = '/usr/local/bin/python3'
 		" make YCM compatible with UltiSnips (using supertab)
 		let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 		let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
@@ -198,6 +228,7 @@ call plug#begin('~/.vim/plugged')
 	"}}
 	Plug 'scrooloose/vim-slumlord'
 	Plug 'aklt/plantuml-syntax'
+	Plug 'weirongxu/plantuml-previewer.vim'
 	Plug 'wellle/targets.vim'
 	Plug 'tpope/vim-fugitive'
 	Plug 'chrisbra/csv.vim'
@@ -219,6 +250,26 @@ call plug#begin('~/.vim/plugged')
 	"}}
 	Plug 'dkprice/vim-easygrep'
 	Plug 'heavenshell/vim-pydocstring'
+	Plug 'Shougo/echodoc.vim'
+	Plug 'lifepillar/vim-solarized8'
+	Plug 'Shougo/denite.nvim'
+	Plug 'tpope/vim-eunuch'
+	Plug 'junegunn/vim-peekaboo'
+	Plug 'mbbill/undotree'
+	" {{{
+		set undofile
+		" Auto create undodir if not exists
+		let undodir = expand($HOME . '/.nvim/cache/undodir')
+		if !isdirectory(undodir)
+		call mkdir(undodir, 'p')
+		endif
+		let &undodir = undodir
+
+		nnoremap <leader>U :UndotreeToggle<CR>
+	" }}}
+	Plug 'kshenoy/vim-signature'
+	" Keep me last!
+	Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 "Credit joshdick
@@ -253,7 +304,7 @@ else
 endif
 
 set backupdir=~/.config/nvim/backup
-set undodir=~/.config/nvim/undo
-set undofile
 
 autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4 expandtab
+autocmd BufRead,BufNewFile *.sp set syntax=sql
+autocmd BufRead,BufNewFile *.tbl set syntax=sql
